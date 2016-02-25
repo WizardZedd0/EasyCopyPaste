@@ -52,7 +52,6 @@ class C_Clipboard
 			isBusy:=true 
 			tClip:=ClipboardAll
 			Clipboard:=this.clip
-			ClipWait, % this.timeout
 			if (!wasError:=ErrorLevel) {
 				SendInput, ^v
 				sleep, 100 ; For reliability
