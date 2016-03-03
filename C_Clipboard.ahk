@@ -12,8 +12,6 @@
 ;		Copy
 ;		Paste
 
-
-
 class C_Clipboard
 {
 	static tClip ; Temporary Clip
@@ -34,7 +32,7 @@ class C_Clipboard
 		ClipWait, % this.timeout , 1	; Waits for anything on clipboard
 		if(!wasError:=ErrorLevel) {
 			if((this.clip := Clipboard) = "") {	
-				MsgBox, 16, Copy Error,  % A_ThisFunc ": An error occurred. Copy Unsuccessful."
+				MsgBox, 16, Copy Error,  % A_ThisFunc ": An error occurred. Copy Unsuccessful. `nThis happens when the clipboard was found empty because it `nwas changed during processing."
 				wasError:=true
 			}
 		}
@@ -60,6 +58,25 @@ class C_Clipboard
 			isBusy:=false
 		} else 
 			sendinput ^v
+		return (wasError ? false : this.clip)
+	}
+	; CUT
+	Cut() {
+		if(isBusy) 
+			return false
+		isBusy:=true
+		tClip:=ClipboardAll
+		Clipboard = 
+		sendinput, ^x
+		ClipWait, % this.timeout , 1
+		if(!wasError:=ErrorLevel) {
+			if((this.clip := Clipboard) = "") {	
+				MsgBox, 16, Copy Error,  % A_ThisFunc ": An error occurred. Copy Unsuccessful. `nThis happens when the clipboard was found empty because it `nwas changed during processing."
+				wasError:=true
+			} 
+		} 
+		Clipboard:=tClip
+		isBusy:=false
 		return (wasError ? false : this.clip)
 	}
 }

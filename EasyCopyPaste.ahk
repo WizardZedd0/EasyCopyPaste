@@ -33,22 +33,18 @@
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #SingleInstance, force		; Don't worry about annoying messages.
 #InstallMouseHook
-; #NoTrayIcon
 #include C_Clipboard.ahk
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SendMode, Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir, %a_scriptdir%
+menu, tray, icon, icon.ico
 myClip := new C_Clipboard()
 
-XButton1::^z    ; UNDO
-XButton2::^r    ; REDO
-MButton::Delete ; DELETE
 ~LButton & RButton::return  ; Prevent LButton + RButton physical press
 
 ; Paste
 Paste:
-if(GetKeyState("LButton", "P"))
-   KeyWait, LButton
-if(GetKeyState("RButton", "P"))
-   KeyWait, RButton
+   KeyWait, LButton, P
+   KeyWait, RButton, P
 sleep, 10
 myClip.Paste()
 return
@@ -59,11 +55,13 @@ return
 TimeButtonDown = %A_TickCount%
 x0:=A_CaretX, y0:=A_CaretY
 KeyWait, Shift
-   if (A_TickCount-TimeButtonDown > 200)  ; Button was held down long enough
-   {
-      if (A_CaretX-x0 > 5 || A_CaretX-x0 < -5 || A_CaretY-y0 > 5 || A_CaretY-y0 < -5)
-         myClip.Copy()
-   }
+if(yank)
+   return
+if (A_TickCount-TimeButtonDown > 200)  ; Button was held down long enough
+{
+   if (A_CaretX-x0 > 5 || A_CaretX-x0 < -5 || A_CaretY-y0 > 5 || A_CaretY-y0 < -5)
+      myClip.Copy()
+}
 return  
 ; END LSHIFT
 
